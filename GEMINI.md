@@ -1,0 +1,1 @@
+Read SPEC.md fully before any work. Follow section 13 rules. Do only the phase you are asked to do.

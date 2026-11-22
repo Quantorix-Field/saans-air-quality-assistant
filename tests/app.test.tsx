@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { App } from '../src/app/App.js';
 
@@ -62,21 +62,46 @@ describe('App smoke tests', () => {
     expect(live?.getAttribute('aria-live')).toBe('polite');
   });
 
-  it('document title updates per route', async () => {
-    // With MemoryRouter at '/'
-    renderAt('/');
-    // Title is set in a useEffect with a timeout, but since tests don't wait,
-    // we verify the shell has the effect in place via the route announcer content
-    const live = document.getElementById('route-announcer');
-    expect(live).toBeTruthy();
-  });
-
-  it('focus moves to main on route render', async () => {
+  it('initial render sets title but does NOT move focus to main', () => {
     vi.useFakeTimers();
     const { container } = renderAt('/');
-    const main = container.querySelector('#main');
-    expect(main).toBeTruthy();
+    expect(document.title).toBe('Landing – Saans');
     vi.runAllTimers();
+    const main = container.querySelector('#main');
+    expect(document.activeElement).not.toBe(main);
+    vi.useRealTimers();
+  });
+
+  it('subsequent navigation updates live region and moves focus to main', async () => {
+    vi.useFakeTimers();
+    render(
+      <MemoryRouter initialEntries={['/', '/app']} initialIndex={0}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    // Initial mount on '/'
+    act(() => {
+      vi.runAllTimers();
+    });
+    expect(document.title).toBe('Landing – Saans');
+    const live = document.getElementById('route-announcer');
+    expect(live?.textContent).toBe('');
+
+    // Navigate to /app via link
+    const appLink = screen.getByRole('link', { name: /^App$/i });
+    act(() => {
+      fireEvent.click(appLink);
+    });
+
+    expect(document.title).toBe('Today – Saans');
+    expect(live?.textContent).toBe('Today – Saans');
+
+    act(() => {
+      vi.advanceTimersByTime(50);
+    });
+    const main = document.getElementById('main');
+    expect(document.activeElement).toBe(main);
     vi.useRealTimers();
   });
 });

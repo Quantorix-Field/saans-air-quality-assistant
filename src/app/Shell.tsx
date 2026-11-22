@@ -7,6 +7,7 @@ export function Shell() {
   const location = useLocation();
   const mainRef = useRef<HTMLElement>(null);
   const announceRef = useRef<HTMLDivElement>(null);
+  const isFirstRender = useRef(true);
   const { prefs, setTheme, setTextScale, toggleMotion } = usePreferences();
   const [announced, setAnnounced] = useState('');
 
@@ -18,8 +19,13 @@ export function Shell() {
     };
     const title = titles[location.pathname] ?? 'Page not found – Saans';
     document.title = title;
+
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     setAnnounced(title);
-    // Small delay so the DOM is ready
     const id = setTimeout(() => {
       mainRef.current?.focus();
     }, 50);

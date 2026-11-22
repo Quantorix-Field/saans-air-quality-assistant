@@ -64,7 +64,7 @@ describe('Preferences', () => {
 
   it('text scale increase updates font-size', () => {
     renderShell();
-    const increaseBtn = screen.getByRole('button', { name: /Increase text size/i });
+    const increaseBtn = screen.getByRole('button', { name: /Larger text/i });
     fireEvent.click(increaseBtn);
     expect(document.documentElement.style.fontSize).not.toBe('100%');
   });

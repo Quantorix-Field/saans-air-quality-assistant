@@ -44,7 +44,7 @@ export function Shell() {
 
       <header className="site-header" role="banner">
         <div className="container">
-          <Link to="/" className="site-logo" aria-label="Saans home">
+          <Link to="/" className="site-logo">
             Saans<span>.</span>
           </Link>
           <nav className="site-nav" aria-label="Main navigation">

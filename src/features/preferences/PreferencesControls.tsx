@@ -49,14 +49,13 @@ export function PreferencesControls({
         </div>
       </fieldset>
 
-      <div className="text-size-controls" aria-label="Text size">
+      <div className="text-size-controls" role="group" aria-label="Text size">
         <button
           type="button"
-          aria-label="Decrease text size"
           onClick={() => onTextScale(SCALES[Math.max(0, scaleIdx - 1)] ?? 1)}
           disabled={textScale === 1}
         >
-          A−
+          Smaller text
         </button>
         <span
           aria-live="polite"
@@ -67,11 +66,10 @@ export function PreferencesControls({
         </span>
         <button
           type="button"
-          aria-label="Increase text size"
           onClick={() => onTextScale(SCALES[Math.min(SCALES.length - 1, scaleIdx + 1)] ?? 4)}
           disabled={textScale === 4}
         >
-          A+
+          Larger text
         </button>
       </div>
 

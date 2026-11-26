@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import type { Language } from '../../../shared/domain/types.js';
 import {
   type Preferences,
   type Theme,
@@ -34,5 +35,10 @@ export function usePreferences() {
     [prefs, update],
   );
 
-  return { prefs, setTheme, setTextScale, toggleMotion };
+  const setLanguage = useCallback(
+    (language: Language) => update({ ...prefs, language }),
+    [prefs, update],
+  );
+
+  return { prefs, setTheme, setTextScale, toggleMotion, setLanguage };
 }

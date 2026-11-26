@@ -1,13 +1,16 @@
 import type { Theme, TextScale } from './usePreferences.js';
+import type { Language } from '../../../shared/domain/types.js';
 import { TEXT_SCALE_VALUES } from './prefs.js';
 
 interface PreferencesControlsProps {
   theme: Theme;
   textScale: TextScale;
   motionOff: boolean;
+  language: Language;
   onTheme: (t: Theme) => void;
   onTextScale: (s: TextScale) => void;
   onToggleMotion: () => void;
+  onLanguage: (l: Language) => void;
 }
 
 const THEMES: { value: Theme; label: string }[] = [
@@ -18,13 +21,25 @@ const THEMES: { value: Theme; label: string }[] = [
 
 const SCALES = [1, 2, 3, 4] as const;
 
+function handleLanguageChange(
+  e: React.ChangeEvent<HTMLSelectElement>,
+  onLanguage: (l: Language) => void,
+): void {
+  const val = e.target.value;
+  if (val === 'en' || val === 'hi') {
+    onLanguage(val);
+  }
+}
+
 export function PreferencesControls({
   theme,
   textScale,
   motionOff,
+  language,
   onTheme,
   onTextScale,
   onToggleMotion,
+  onLanguage,
 }: PreferencesControlsProps) {
   const scaleIdx = SCALES.indexOf(textScale);
 
@@ -71,6 +86,18 @@ export function PreferencesControls({
         >
           Larger text
         </button>
+      </div>
+
+      <div className="language-control">
+        <label htmlFor="lang-select">Language / भाषा</label>
+        <select
+          id="lang-select"
+          value={language}
+          onChange={(e) => handleLanguageChange(e, onLanguage)}
+        >
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+        </select>
       </div>
 
       <button

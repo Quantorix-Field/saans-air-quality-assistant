@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { Shell } from '../src/app/Shell.js';
-import { loadPreferences, savePreferences } from '../src/features/preferences/prefs.js';
+import { loadPreferences, savePreferences, applyPreferences } from '../src/features/preferences/prefs.js';
 
 function renderShell() {
   return render(
@@ -18,6 +18,7 @@ describe('Preferences', () => {
     document.documentElement.removeAttribute('data-theme');
     document.documentElement.removeAttribute('data-motion');
     document.documentElement.style.fontSize = '';
+    document.documentElement.lang = '';
   });
 
   afterEach(() => {
@@ -70,7 +71,7 @@ describe('Preferences', () => {
   });
 
   it('preferences persist to localStorage', () => {
-    const prefs = { theme: 'dark' as const, textScale: 2 as const, motionOff: true };
+    const prefs = { theme: 'dark' as const, textScale: 2 as const, motionOff: true, language: 'en' as const };
     savePreferences(prefs);
     const loaded = loadPreferences();
     expect(loaded.theme).toBe('dark');
@@ -105,7 +106,45 @@ describe('Preferences', () => {
   it('works when localStorage throws on setItem', () => {
     const original = Storage.prototype.setItem;
     Storage.prototype.setItem = vi.fn(() => { throw new Error('storage full'); });
-    expect(() => savePreferences({ theme: 'light', textScale: 1, motionOff: false })).not.toThrow();
+    expect(() => savePreferences({ theme: 'light', textScale: 1, motionOff: false, language: 'en' })).not.toThrow();
     Storage.prototype.setItem = original;
+  });
+
+  it('defaults language to en when navigator.language is English', () => {
+    const prefs = loadPreferences();
+    expect(prefs.language).toBe('en');
+  });
+
+  it('validates language on load – invalid value falls back', () => {
+    localStorage.setItem('saans:prefs', JSON.stringify({
+      theme: 'system', textScale: 1, motionOff: false, language: 'fr',
+    }));
+    const prefs = loadPreferences();
+    expect(prefs.language).toBe('en');
+  });
+
+  it('applyPreferences sets document.documentElement.lang', () => {
+    applyPreferences({ theme: 'system', textScale: 1, motionOff: false, language: 'hi' });
+    expect(document.documentElement.lang).toBe('hi');
+  });
+
+  it('language selector appears in the shell', () => {
+    renderShell();
+    const select = screen.getByLabelText('Language / भाषा');
+    expect(select).toBeDefined();
+    expect(select.tagName.toLowerCase()).toBe('select');
+  });
+
+  it('language selector changes language preference', () => {
+    renderShell();
+    const select = screen.getByLabelText('Language / भाषा') as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: 'hi' } });
+    expect(document.documentElement.lang).toBe('hi');
+  });
+
+  it('persists language to localStorage', () => {
+    savePreferences({ theme: 'system', textScale: 1, motionOff: false, language: 'hi' });
+    const loaded = loadPreferences();
+    expect(loaded.language).toBe('hi');
   });
 });

@@ -1,3 +1,5 @@
+import type { Language } from '../../../shared/domain/types.js';
+
 export type Theme = 'system' | 'light' | 'dark';
 export type TextScale = 1 | 2 | 3 | 4;
 
@@ -5,6 +7,7 @@ export interface Preferences {
   theme: Theme;
   textScale: TextScale;
   motionOff: boolean;
+  language: Language;
 }
 
 export const TEXT_SCALE_VALUES: Record<TextScale, string> = {
@@ -16,10 +19,20 @@ export const TEXT_SCALE_VALUES: Record<TextScale, string> = {
 
 const STORAGE_KEY = 'saans:prefs';
 
+function defaultLanguage(): Language {
+  try {
+    const nav = navigator.language;
+    return nav.startsWith('hi') ? 'hi' : 'en';
+  } catch {
+    return 'en';
+  }
+}
+
 const DEFAULTS: Preferences = {
   theme: 'system',
   textScale: 1,
   motionOff: false,
+  language: defaultLanguage(),
 };
 
 function isTheme(v: unknown): v is Theme {
@@ -28,6 +41,10 @@ function isTheme(v: unknown): v is Theme {
 
 function isTextScale(v: unknown): v is TextScale {
   return v === 1 || v === 2 || v === 3 || v === 4;
+}
+
+function isLanguage(v: unknown): v is Language {
+  return v === 'en' || v === 'hi';
 }
 
 export function loadPreferences(): Preferences {
@@ -41,6 +58,7 @@ export function loadPreferences(): Preferences {
       theme: isTheme(p['theme']) ? p['theme'] : DEFAULTS.theme,
       textScale: isTextScale(p['textScale']) ? p['textScale'] : DEFAULTS.textScale,
       motionOff: typeof p['motionOff'] === 'boolean' ? p['motionOff'] : DEFAULTS.motionOff,
+      language: isLanguage(p['language']) ? p['language'] : DEFAULTS.language,
     };
   } catch {
     return { ...DEFAULTS };
@@ -60,4 +78,5 @@ export function applyPreferences(prefs: Preferences): void {
   root.setAttribute('data-theme', prefs.theme);
   root.setAttribute('data-motion', prefs.motionOff ? 'off' : 'on');
   root.style.fontSize = TEXT_SCALE_VALUES[prefs.textScale] ?? '100%';
+  root.lang = prefs.language;
 }

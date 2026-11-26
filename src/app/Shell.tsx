@@ -8,7 +8,7 @@ export function Shell() {
   const mainRef = useRef<HTMLElement>(null);
   const announceRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useRef(true);
-  const { prefs, setTheme, setTextScale, toggleMotion } = usePreferences();
+  const { prefs, setTheme, setTextScale, toggleMotion, setLanguage } = usePreferences();
   const [announced, setAnnounced] = useState('');
 
   // Move focus to main and update live region on route change
@@ -66,9 +66,11 @@ export function Shell() {
             theme={prefs.theme}
             textScale={prefs.textScale}
             motionOff={prefs.motionOff}
+            language={prefs.language}
             onTheme={setTheme}
             onTextScale={setTextScale}
             onToggleMotion={toggleMotion}
+            onLanguage={setLanguage}
           />
           <div className="footer-legal">
             <p>

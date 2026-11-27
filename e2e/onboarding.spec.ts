@@ -92,7 +92,7 @@ test('delete my data returns to onboarding', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Settings');
   await page.getByRole('button', { name: 'Delete my data' }).click();
   await page.locator('dialog[open]').waitFor();
-  await page.getByRole('button', { name: 'Delete' }).click();
+  await page.locator('dialog[open]').getByRole('button', { name: 'Delete', exact: true }).click();
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Choose your city');
 });

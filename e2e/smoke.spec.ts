@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-const ROUTES = ['/', '/app'] as const;
+const ROUTES = ['/', '/app', '/app/settings'] as const;
 const COLOR_SCHEMES = ['light', 'dark'] as const;
 
 for (const route of ROUTES) {
@@ -42,16 +42,18 @@ for (const route of ROUTES) {
   }
 }
 
-test('no horizontal overflow at 320px', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 568 });
-  await page.goto('/');
-  await page.waitForSelector('main');
+for (const route of ROUTES) {
+  test(`no horizontal overflow at 320px: ${route}`, async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await page.goto(route);
+    await page.waitForSelector('main');
 
-  const overflow = await page.evaluate(() => {
-    return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+    const overflow = await page.evaluate(() => {
+      return document.documentElement.scrollWidth > document.documentElement.clientWidth;
+    });
+    expect(overflow, `Horizontal overflow at 320px on ${route}`).toBe(false);
   });
-  expect(overflow, 'Horizontal overflow at 320px').toBe(false);
-});
+}
 
 test('keyboard: Tab reaches skip link first', async ({ page }) => {
   await page.goto('/');

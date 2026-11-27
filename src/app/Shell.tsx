@@ -2,6 +2,25 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { usePreferences } from '../features/preferences/usePreferences.js';
 import { PreferencesControls } from '../features/preferences/PreferencesControls.js';
+import { I18nProvider } from '../i18n/index.js';
+import { useI18n } from '../i18n/index.js';
+
+const TITLES: Record<string, string> = {
+  '/': 'Landing – Saans',
+  '/app': 'Today – Saans',
+  '/app/settings': 'Settings – Saans',
+};
+
+function ShellNav() {
+  const { t } = useI18n();
+  return (
+    <nav className="site-nav" aria-label="Main navigation">
+      <NavLink to="/" end>Home</NavLink>
+      <NavLink to="/app">App</NavLink>
+      <NavLink to="/app/settings">{t('settings.nav')}</NavLink>
+    </nav>
+  );
+}
 
 export function Shell() {
   const location = useLocation();
@@ -11,13 +30,8 @@ export function Shell() {
   const { prefs, setTheme, setTextScale, toggleMotion, setLanguage } = usePreferences();
   const [announced, setAnnounced] = useState('');
 
-  // Move focus to main and update live region on route change
   useEffect(() => {
-    const titles: Record<string, string> = {
-      '/': 'Landing – Saans',
-      '/app': 'Today – Saans',
-    };
-    const title = titles[location.pathname] ?? 'Page not found – Saans';
+    const title = TITLES[location.pathname] ?? 'Page not found – Saans';
     document.title = title;
 
     if (isFirstRender.current) {
@@ -33,7 +47,7 @@ export function Shell() {
   }, [location.pathname]);
 
   return (
-    <>
+    <I18nProvider language={prefs.language}>
       <a href="#main" className="skip-link">
         Skip to main content
       </a>
@@ -47,12 +61,7 @@ export function Shell() {
           <Link to="/" className="site-logo">
             Saans<span>.</span>
           </Link>
-          <nav className="site-nav" aria-label="Main navigation">
-            <NavLink to="/" end>
-              Home
-            </NavLink>
-            <NavLink to="/app">App</NavLink>
-          </nav>
+          <ShellNav />
         </div>
       </header>
 
@@ -88,6 +97,6 @@ export function Shell() {
           </div>
         </div>
       </footer>
-    </>
+    </I18nProvider>
   );
 }

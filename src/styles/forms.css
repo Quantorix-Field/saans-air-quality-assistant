@@ -1,0 +1,189 @@
+/* Form, list, dialog and step-indicator styles */
+
+.form-stack { display: flex; flex-direction: column; gap: var(--space-5); }
+.form-group { display: flex; flex-direction: column; gap: var(--space-2); }
+.form-label { font-weight: 600; font-size: var(--text-base); }
+.form-note { color: var(--muted); font-size: var(--text-sm); }
+
+.form-input,
+.form-select {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.form-input:focus-visible,
+.form-select:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.form-fieldset { border: none; padding: 0; margin: 0; }
+.form-legend { display: block; padding: 0; font-weight: 600; font-size: var(--text-base); margin-bottom: var(--space-2); }
+
+.form-radio-group,
+.form-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-check-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  min-width: 44px;
+  cursor: pointer;
+}
+
+.form-check-label input[type="checkbox"],
+.form-check-label input[type="radio"] {
+  min-height: unset;
+  min-width: unset;
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+.form-error,
+.geo-error {
+  color: var(--band-very-poor);
+  font-size: var(--text-sm);
+  margin-top: var(--space-1);
+}
+
+.place-results {
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-top: var(--space-2);
+}
+
+.place-result-btn {
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 44px;
+  font: inherit;
+}
+
+.place-result-btn:last-child { border-bottom: none; }
+.place-result-btn:hover { background: var(--surface-2); }
+
+.place-result-btn:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: calc(-1 * var(--focus-ring-offset));
+}
+
+.place-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-height: 1.5em;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.step-indicator {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin-bottom: var(--space-4);
+}
+
+.onboarding-card { max-width: 540px; margin-inline: auto; }
+.onboarding-card > h1,
+.onboarding-back { margin-bottom: var(--space-4); }
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-block: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-section:last-of-type { border-bottom: none; }
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+.confirm-dialog {
+  margin: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  max-width: 400px;
+  width: min(90vw, 400px);
+  color: var(--ink);
+}
+
+.confirm-dialog::backdrop { background: rgb(0 0 0 / 0.5); }
+.confirm-dialog-title { font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-4); }
+.confirm-dialog-body { color: var(--muted); margin-bottom: var(--space-6); }
+
+.confirm-dialog-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.outdoor-hours-row { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+.outdoor-hours-row .form-group { flex: 1 1 120px; min-width: min(120px, 100%); }
+
+@media (forced-colors: active) {
+  .form-input,
+  .form-select,
+  .place-result-btn {
+    border: 1px solid ButtonText;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .place-result-btn:hover {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  .confirm-dialog { border: 1px solid ButtonText; background: Canvas; }
+  .form-error, .geo-error { color: LinkText; }
+}
+
+@media (prefers-contrast: more) {
+  .form-input,
+  .form-select {
+    border-width: 2px;
+    border-color: var(--ink);
+  }
+
+  .place-result-btn { border-bottom-width: 2px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion="off"]) .place-result-btn {
+    transition: background-color 0.15s ease;
+  }
+}

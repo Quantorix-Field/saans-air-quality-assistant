@@ -31,6 +31,18 @@ describe('App smoke tests', () => {
     expect(screen.getByRole('heading', { name: /Choose your city/i })).toBeDefined();
   });
 
+  it('renders Today dashboard placeholder when place and profile exist', () => {
+    localStorage.setItem('saans:place', JSON.stringify({ name: 'Delhi', region: 'Delhi', country: 'India', lat: 28.61, lon: 77.21 }));
+    localStorage.setItem('saans:profile', JSON.stringify({ ageGroup: 'adult', conditions: [], commuteMode: 'metro', hasPurifier: false, hasN95: false, outdoorHours: { start: 5, end: 21 } }));
+    renderAt('/app');
+    expect(screen.getByRole('heading', { level: 1, name: /Today in Delhi/i })).toBeDefined();
+  });
+
+  it('renders settings page at /app/settings', () => {
+    renderAt('/app/settings');
+    expect(screen.getByRole('heading', { level: 1, name: /Settings/i })).toBeDefined();
+  });
+
   it('renders not-found for unknown path', () => {
     renderAt('/does-not-exist');
     expect(screen.getByRole('heading', { name: /Page not found/i })).toBeDefined();
